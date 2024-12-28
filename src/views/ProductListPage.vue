@@ -114,7 +114,7 @@ async function do_logout() {
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Lista de Productos</ion-title>
+        <ion-title>Listado de Productos</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="do_logout">
             <ion-icon :icon="logOutOutline" />
@@ -124,6 +124,12 @@ async function do_logout() {
     </ion-header>
 
     <ion-content class="ion-padding">
+      <!-- Logo y Nombre -->
+      <div class="trendyshop-header">
+        <img src="/images/image1.jpg" alt="Logo de TrendyShop" class="trendyshop-logo" />
+        <h2 class="trendyshop-title">TrendyShop</h2>
+      </div>
+
       <!-- Componente para añadir productos -->
       <add-product @add_product="do_addProduct" />
 
@@ -148,8 +154,24 @@ async function do_logout() {
 </template>
 
 <style scoped>
-.load-more-container {
-  margin-top: 1rem;
-  text-align: center;
+.trendyshop-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.trendyshop-logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 1rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.trendyshop-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
 }
 </style>

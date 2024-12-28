@@ -1,6 +1,6 @@
 services:
   firebase:
-    container_name: firebase-emulator44
+    container_name: firebase-emulator55
     command: "firebase emulators:start --import ./data --export-on-exit ./data --project demo-mi-demo"
     # build:
     #  context: .
