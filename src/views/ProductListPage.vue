@@ -17,17 +17,19 @@ import { logout } from '@/firebase/services/authService';
 
 import AddProduct from './AddProduct.vue';
 import ProductList from './ProductList.vue';
-import EditProductModal from './EditProductModal.vue'; // Importar el nuevo modal
+import EditProductModal from './EditProductModal.vue';
 import { onIonViewDidEnter } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-// Estado reactivo para los productos y el modal
+// Estado reactivo para los productos y la paginación
 const estado = reactive({
   productos: [],
-  lastVisible: null, // Para paginación
-  isLoading: false, // Indica si está cargando
+  lastVisible: null, // Último producto visible
+  firstVisible: null, // Primer producto visible
+  currentPage: 1,
+  isLoading: false,
   selectedProduct: null, // Producto seleccionado para editar
 });
 
@@ -36,13 +38,31 @@ onIonViewDidEnter(async function () {
   await loadProductos();
 });
 
-// Función para cargar productos (paginación)
-async function loadProductos() {
+// Función para cargar productos para una página específica
+async function loadProductos(isNext = true) {
   estado.isLoading = true;
   try {
-    const { productos, lastVisible } = await getProductos(6, estado.lastVisible);
-    estado.productos = [...estado.productos, ...productos];
-    estado.lastVisible = lastVisible; // Actualiza el último producto visible
+    let querySnapshot;
+
+    if (isNext && estado.lastVisible) {
+      querySnapshot = await getProductos(6, estado.lastVisible);
+    } else if (!isNext && estado.firstVisible) {
+      querySnapshot = await getProductos(6, null, estado.firstVisible);
+    } else {
+      querySnapshot = await getProductos(6);
+    }
+
+    if (isNext) {
+      estado.productos = querySnapshot.productos;
+      estado.firstVisible = querySnapshot.productos[0];
+      estado.lastVisible = querySnapshot.lastVisible;
+      estado.currentPage++;
+    } else {
+      estado.productos = querySnapshot.productos;
+      estado.firstVisible = querySnapshot.firstVisible;
+      estado.lastVisible = querySnapshot.lastVisible;
+      estado.currentPage--;
+    }
   } catch (error) {
     console.error('Error al cargar productos:', error.message);
   } finally {
@@ -142,6 +162,24 @@ async function do_logout() {
         />
       </ion-list>
 
+      <!-- Botones de paginación -->
+      <div class="pagination-container">
+        <ion-button
+          expand="block"
+          @click="() => loadProductos(false)"
+          :disabled="estado.currentPage === 1"
+        >
+          Anterior
+        </ion-button>
+        <ion-button
+          expand="block"
+          @click="() => loadProductos(true)"
+          :disabled="!estado.lastVisible"
+        >
+          Siguiente
+        </ion-button>
+      </div>
+
       <!-- Modal para editar producto -->
       <edit-product-modal
         v-if="estado.selectedProduct"
@@ -173,5 +211,11 @@ async function do_logout() {
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
 </style>
