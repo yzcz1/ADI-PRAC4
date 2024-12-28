@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import LoginPage from '@/views/LoginPage.vue';
 import ProductListPage from '@/views/ProductListPage.vue'; // Importa la nueva página
 import About from '../views/About.vue';
-import ProductEditPage from '@/views/ProductEditPage.vue';
+
 
 const routes = [
   {
@@ -19,11 +19,7 @@ const routes = [
     name: 'ProductList',
     component: ProductListPage, // Ruta de ProductListPage
   },
-  {
-    path: '/products/edit/:id', // Ruta para editar
-    name: 'ProductEdit',
-    component: ProductEditPage,
-  },
+  
   
   {
     path: '/about',
